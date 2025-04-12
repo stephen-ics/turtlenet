@@ -22,9 +22,15 @@ defmodule Server do
     success_message = "HTTP/1.1 200 OK\r\n\r\n"
     fail_message = "HTTP/1.1 404 Not Found\r\n\r\n"
 
+
+
     case request_route do
       "/" -> :gen_tcp.send(client, success_message)
-      "/echo/" -> :gen_tcp.send(client, "asdsad")
+      <<"/echo/", echo_message::binary>> ->
+        echo_size = byte_size(echo_message)
+        echo_message = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: #{echo_size}\r\n\r\n#{echo_message}"
+        IO.puts(echo_message)
+        :gen_tcp.send(client, echo_message)
       _ -> :gen_tcp.send(client, fail_message)
     end
 
