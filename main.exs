@@ -22,10 +22,10 @@ defmodule Server do
     success_message = "HTTP/1.1 200 OK\r\n\r\n"
     fail_message = "HTTP/1.1 404 Not Found\r\n\r\n"
 
-    if request_route == "/" do
-      :gen_tcp.send(client, success_message)
-    else
-      :gen_tcp.send(client, fail_message)
+    case request_route do
+      "/" -> :gen_tcp.send(client, success_message)
+      "/echo/" -> :gen_tcp.send(client, "asdsad")
+      _ -> :gen_tcp.send(client, fail_message)
     end
 
     :gen_tcp.close(client)
