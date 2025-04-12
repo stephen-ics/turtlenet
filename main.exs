@@ -14,15 +14,10 @@ defmodule Server do
     {:ok, request} = :gen_tcp.recv(client, 0)
 
     request_str = to_string(request)
+    request_list = String.split(request_str, ["\r\n"])
 
-    s = String.split(request_str, ["\r\n"])
-
-    [get_request, host, user_agent, accept] = s
+    [get_request, host, user_agent, accept | remainder] = request_list
     [request_type, request_route, http_version] = String.split(get_request, [" "])
-    IO.puts(host)
-    IO.puts(user_agent)
-    IO.puts(accept)
-
 
     success_message = "HTTP/1.1 200 OK\r\n\r\n"
     fail_message = "HTTP/1.1 404 Not Found\r\n\r\n"
@@ -33,17 +28,6 @@ defmodule Server do
       :gen_tcp.send(client, fail_message)
     end
 
-    # responseOK = """
-    # HTTP/1.1 200 OK\r\n\r\n
-    # """
-
-    # responseNotFound = """
-    # HTTP/1.1 404 Not Found\r\n\r\n
-    # """
-
-
-
-    # :gen_tcp.send(client, response)
     :gen_tcp.close(client)
   end
 end
